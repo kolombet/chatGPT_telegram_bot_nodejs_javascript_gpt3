@@ -21,8 +21,8 @@
     1.  git clone https://github.com/himanshusr/chatGPT_telegram_nodejs.git
     2.  cd chatgpt_telegram_nodejs
     3.  npm install
-    5.  cp .env.sample .env
-    4.  npm run dev
+    4.  cp .env.sample .env
+    5.  npm run dev
 
 
 
