@@ -18,9 +18,10 @@
  
 ![alt text](https://github.com/himanshusr/chatGPT_telegram_nodejs/blob/master/images/session-token.png)
 ## Run
-    1.  cd chatgpt_telegram_nodejs
-    2.  npm install
-    3.  npm run dev
+    1.  git clone https://github.com/himanshusr/chatGPT_telegram_nodejs.git
+    2.  cd chatgpt_telegram_nodejs
+    3.  npm install
+    4.  npm run dev
 
 
 
