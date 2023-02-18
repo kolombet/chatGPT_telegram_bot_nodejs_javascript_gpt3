@@ -5,26 +5,33 @@
  - /newbot
  - Copy the token and save it in .env under TELEGRAM_TOKEN
 
+## To generate OPEN_AI_SESSION_TOKEN
+ - go here, create account, create token https://platform.openai.com/account/api-keys
+
 ## To generate SERVER_URL
 - use ngrok for local env or some hosting provider like AWS EC2.
 
-## To generate OPEN_AI_SESSION_TOKEN
- - Login in OpenAi's ChatGPT
- - Open Developer Tools
- - Go to application
- - Go to cookies
- - Copy the value of __Secure-next-auth.session-token and save it in .env under OPEN_AI_SESSION_TOKEN
- 
- 
-![alt text](https://github.com/himanshusr/chatGPT_telegram_nodejs/blob/master/images/session-token.png)
+## How to use on local machine with ngrok
+brew install ngrok
+
+- Create account on https://ngrok.com/, add token
+ngrok config add-authtoken <your token>
+
+- Launch ngrok local connection (default port 8000)
+ngrok http <http server port>
+
+- Copy ngrok url (forwarding line)
+<random-letters>.eu.ngrok.io
+
+- Put ngrok url (without https://) to .env
+SERVER_URL='blablabla.eu.ngrok.io'
+
 ## Run
     1.  git clone https://github.com/himanshusr/chatGPT_telegram_nodejs.git
     2.  cd chatgpt_telegram_nodejs
     3.  npm install
     4.  cp .env.sample .env
     5.  npm run dev
-
-
 
 ## License
 
