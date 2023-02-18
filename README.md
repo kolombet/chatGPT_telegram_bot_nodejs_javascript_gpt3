@@ -14,16 +14,16 @@
 ## How to use on local machine with ngrok
 brew install ngrok
 
-- Create account on https://ngrok.com/, add token
+### Create account on https://ngrok.com/, add token
 ngrok config add-authtoken <your token>
 
-- Launch ngrok local connection (default port 8000)
+### Launch ngrok local connection (default port 8000)
 ngrok http <http server port>
 
-- Copy ngrok url (forwarding line)
+### Copy ngrok url (forwarding line)
 <random-letters>.eu.ngrok.io
 
-- Put ngrok url (without https://) to .env
+### Put ngrok url (without https://) to .env
 SERVER_URL='blablabla.eu.ngrok.io'
 
 ## Run
