@@ -15,16 +15,16 @@
 brew install ngrok
 
 ### Create account on https://ngrok.com/, add token
-ngrok config add-authtoken <your token>
+ngrok config add-authtoken _your token from dashboard_
 
 ### Launch ngrok local connection (default port 8000)
-ngrok http <http server port>
+ngrok http _http server port from .env_
 
 ### Copy ngrok url (forwarding line)
-<random-letters>.eu.ngrok.io
+_random-generated-letters_.eu.ngrok.io
 
 ### Put ngrok url (without https://) to .env
-SERVER_URL='blablabla.eu.ngrok.io'
+SERVER_URL='_blablabla_.eu.ngrok.io'
 
 ## Run
     1.  git clone https://github.com/himanshusr/chatGPT_telegram_nodejs.git
