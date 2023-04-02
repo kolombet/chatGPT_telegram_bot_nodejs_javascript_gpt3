@@ -1,7 +1,8 @@
 import * as dotenv from 'dotenv';
-import express from 'express';
+import express, { request } from 'express';
 import axios from 'axios';
 import { ChatGPTAPI } from 'chatgpt';
+import { BingChat } from 'bing-chat'
 
 dotenv.config();
 
@@ -27,65 +28,80 @@ const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_TOKEN}`;
 const URI = `/webhook/${TELEGRAM_TOKEN}`;
 const WEBHOOK_URL = SERVER_URL + URI;
 
-const api = new ChatGPTAPI({
+const chatGptApi = new ChatGPTAPI({
 	apiKey: OPEN_AI_TOKEN
 });
 
+const bingApi = new BingChat({
+	cookie: process.env.BING_COOKIE
+});
+
 async function chatGpt(request) {
-	console.log('Almighty GPT3, ' + request);
-	const res = await api.sendMessage(request);
-	console.log('GPT3 answer: ' + res.text);
+	const res = await chatGptApi.sendMessage(request);
 	return res.text;
 }
 
-// run test request to check if it works
-chatGpt('hey, are you there?');
+async function bingGpt(request) {
+	const res = await bingApi.sendMessage(request);
+	// console.log(JSON.stringify(res));
+	console.log(res.text);
+	return res.text;
+}
 
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false}));
+const activeGpt = bingGpt;
+
+// run test request to check if it works
+const test = activeGpt('hey, are you there?');
+console.log(test);
 
 
 // Intialise the telgram bot by setting up the webhook
-const init = async () => {
+const initTelegramApi = async () => {
 	const res = await axios.get(`${TELEGRAM_API}/setWebhook?url=${WEBHOOK_URL}`);
 	console.log(res.data);
 }
 
-// @route: https://4e96-116-75-124-136.in.ngrok.io/webhook/${token}
-// @desc: Listening to the webhook events at URI
-// @access: public
+function initExpress() {
+	const app = express();
+	app.use(express.json());
+	app.use(express.urlencoded({ extended: false}));
+	// @route: https://4e96-116-75-124-136.in.ngrok.io/webhook/${token}
+	// @desc: Listening to the webhook events at URI
+	// @access: public
 
-app.post(URI, async (req, res) => {
-	const chatId = req.body.message.chat.id;
-	try {
-		// Console.log the incoming message
-		console.log(req.body);
+	app.post(URI, async (req, res) => {
+		const chatId = req.body.message.chat.id;
+		try {
+			// Console.log the incoming message
+			console.log(req.body);
+			const request = req.body.message.text;
+			console.log('Almighty GPT, ' + request);
+			const gptRes = await activeGpt(request);
+			console.log('GPT answer: ' + res.text);
 
-		// Get chatGPT response by sending message.text
-		const chatGptRes = await chatGpt(req.body.message.text);
-
-		// Take the chatGPT response and send it to the telegram bot
-		await axios.post(`${TELEGRAM_API}/sendMessage`, {
-			chat_id: chatId,
-			text: chatGptRes
-		})
-		return res.send();
-	} catch (error) {
-		console.log('Error: ', error);
-			// Ping the user that error has occured.
-		await axios.post(`${TELEGRAM_API}/sendMessage`, {
-			chat_id: chatId,
-			text: 'An Error Occurred!'
-		});
-		return res.send();
-	}
-});
+			// Take the chatGPT response and send it to the telegram bot
+			await axios.post(`${TELEGRAM_API}/sendMessage`, {
+				chat_id: chatId,
+				text: gptRes
+			})
+			return res.send();
+		} catch (error) {
+			console.log('Error: ', error);
+				// Ping the user that error has occured.
+			await axios.post(`${TELEGRAM_API}/sendMessage`, {
+				chat_id: chatId,
+				text: 'An Error Occurred!'
+			});
+			return res.send();
+		}
+	});
 
 
-app.listen(PORT, async () =>{
-	console.log(`Server is running on PORT ${PORT}`);
-	// Call init everytime the Server starts;
-	await init();
-} );
+	app.listen(PORT, async () =>{
+		console.log(`Server is running on PORT ${PORT}`);
+		// Call init everytime the Server starts;
+		await initTelegramApi();
+	} );
+}
+initExpress();
 
